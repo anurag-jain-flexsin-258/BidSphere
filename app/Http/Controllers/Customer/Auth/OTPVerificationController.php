@@ -24,14 +24,14 @@ class OTPVerificationController extends Controller
     public function verifyOTP(OTPRequest $request)
     {
         $customer = Customer::where('email', $request->email)
-                            ->where('otp', $request->otp)
-                            ->first();
+            ->where('otp', $request->otp)
+            ->first();
 
         if (!$customer) {
             return redirect()
                 ->route('customer.verify-otp')
-                ->with('email', $request->email)
-                ->withErrors(['otp' => 'Invalid OTP']);
+                ->withInput(['email' => $request->email]) 
+                ->withErrors(['otp' => 'Invalid OTP']);   
         }
 
         // Mark as verified

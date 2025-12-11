@@ -79,7 +79,6 @@ class EmailLoginController extends Controller
     public function logout()
     {
         Auth::guard('customer')->logout();
-
         return redirect()->route('customer.login')->with('success', 'Logged out successfully.');
     }
 }
