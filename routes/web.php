@@ -1,26 +1,36 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Customer\CustomerAuthController;
-use App\Http\Controllers\Customer\CustomerDashboardController;
+use App\Http\Controllers\Customer\Auth\EmailLoginController;
+use App\Http\Controllers\Customer\Auth\OTPVerificationController;
+use App\Http\Controllers\Customer\DashboardController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Customer Routes
 Route::prefix('customer')->name('customer.')->group(function () {
 
-    Route::get('register', [CustomerAuthController::class, 'showRegisterForm'])->name('register');
-    Route::post('register', [CustomerAuthController::class, 'register']);
+    // Email Login
+    Route::get('/login', [EmailLoginController::class, 'showEmailForm'])->name('login');
+    Route::post('/login', [EmailLoginController::class, 'sendOTP'])->name('send-otp');
 
-    Route::get('login', [CustomerAuthController::class, 'showLoginForm'])->name('login');
-    Route::post('login', [CustomerAuthController::class, 'sendOtp']);
+    // Resend OTP
+    Route::post('/resend-otp', [EmailLoginController::class, 'resendOTP'])->name('resend-otp');
 
-    Route::get('verify-otp', [CustomerAuthController::class, 'showOtpForm'])->name('verify.otp');
-    Route::post('verify-otp', [CustomerAuthController::class, 'verifyOtp']);
+    // OTP Verification
+    Route::get('/verify-otp', [OTPVerificationController::class, 'showOTPForm'])->name('verify-otp');
+    Route::post('/verify-otp', [OTPVerificationController::class, 'verifyOTP'])->name('otp.verify');
 
-    Route::post('logout', [CustomerAuthController::class, 'logout'])->name('logout');
+    // Logout
+    Route::post('/logout', [EmailLoginController::class, 'logout'])
+        ->name('logout')
+        ->middleware('auth:customer');
 
-    Route::get('dashboard', [CustomerDashboardController::class, 'index'])->middleware('auth:customer')->name('dashboard');
+    // Auth-protected routes
+    Route::middleware('auth:customer')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/profile', [DashboardController::class, 'editProfile'])->name('profile.edit');
+        Route::post('/profile', [DashboardController::class, 'updateProfile'])->name('profile.update');
+    });
 });

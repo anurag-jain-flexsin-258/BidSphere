@@ -3,15 +3,40 @@
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Customer extends Authenticatable
 {
-    use Notifiable;
+    use HasFactory;
 
+    /**
+     * Guard name for authentication.
+     */
+    protected $guard = 'customer';
+
+    /**
+     * Mass-assignable fields.
+     */
     protected $fillable = [
-        'name', 'email', 'phone', 'gender', 'dob', 'address', 'gst_no', 'image', 'password', 'otp', 'email_verified_at'
+        'name',
+        'email',
+        'phone',
+        'gender',
+        'dob',
+        'address',
+        'gst_no',
+        'image',
+        'password',
+        'otp',
+        'otp_verified',
+        'profile_completed',
     ];
 
-    protected $hidden = ['password', 'otp'];
+    /**
+     * Hidden fields for arrays / JSON.
+     */
+    protected $hidden = [
+        'otp',
+        'password',
+    ];
 }
