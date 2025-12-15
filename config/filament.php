@@ -4,6 +4,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Registered Resources
+    |--------------------------------------------------------------------------
+    |
+    | Here you can register all your Filament Resources so Filament can
+    | automatically generate navigation, routes, and pages.
+    |
+    */
+    'resources' => [
+        \App\Filament\Resources\Categories\CategoryResource::class,
+        // Add other resources here as you create them:
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Broadcasting
     |--------------------------------------------------------------------------
     |
@@ -13,6 +27,7 @@ return [
     | This will allow your users to receive real-time notifications.
     |
     */
+
 
     'broadcasting' => [
 

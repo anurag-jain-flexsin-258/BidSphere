@@ -4,6 +4,7 @@
     <title>@yield('title', 'Customer Portal')</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.3/dist/tailwind.min.css" rel="stylesheet">
     <!-- Optional: Add more CSS links here -->
     @stack('styles')
 </head>
