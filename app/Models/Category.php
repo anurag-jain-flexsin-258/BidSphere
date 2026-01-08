@@ -55,4 +55,9 @@ class Category extends Model
     {
         return $query->orderBy('sort_order');
     }
+
+    public function tenders()
+    {
+        return $this->belongsToMany(Tender::class, 'tender_category');
+    }
 }
