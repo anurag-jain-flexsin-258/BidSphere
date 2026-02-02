@@ -2,48 +2,77 @@
 @section('title', $tender->title)
 
 @section('content')
-<div class="max-w-4xl mx-auto p-6 bg-white shadow rounded">
-    <h1 class="text-2xl font-bold mb-4">{{ $tender->title }}</h1>
+<div class="max-w-4xl mx-auto">
 
-    <p><strong>Description:</strong> {{ $tender->description }}</p>
-    <p><strong>Quantity:</strong> {{ $tender->quantity }}</p>
-    <p><strong>Status:</strong> {{ ucfirst($tender->status) }}</p>
-    <p><strong>Expires At:</strong> {{ $tender->expires_at?->format('Y-m-d') ?? '-' }}</p>
-    <p><strong>Featured:</strong> {{ $tender->is_featured ? 'Yes' : 'No' }}</p>
+    {{-- Card Wrapper --}}
+    <div class="app-card p-4 p-md-5 shadow-sm rounded">
 
-    {{-- Categories --}}
-    <p><strong>Categories:</strong>
-        @foreach($tender->categories as $category)
-            <span class="inline-block bg-gray-200 rounded px-2 py-1 mr-2">{{ $category->name }}</span>
-        @endforeach
-    </p>
+        {{-- Header --}}
+        <h2 class="fw-bold mb-3">{{ $tender->title }}</h2>
+        <p class="text-muted small mb-4">Details of your tender</p>
 
-    {{-- Images --}}
-    @if($tender->images->count())
-        <div class="mt-4">
-            <strong>Images:</strong>
-            <div class="grid grid-cols-3 gap-4 mt-2">
-                @foreach($tender->images as $image)
-                    <img src="{{ asset("storage/tenders/images/tender_{$tender->id}/{$image->image}") }}" alt="Image" class="w-full h-32 object-cover rounded">
-                @endforeach
+        {{-- Basic Info --}}
+        <ul class="list-unstyled mb-4 text-sm">
+            <li class="mb-2"><strong>Description:</strong> {{ $tender->description ?? '-' }}</li>
+            <li class="mb-2"><strong>Quantity:</strong> {{ $tender->quantity }}</li>
+            <li class="mb-2"><strong>Status:</strong> {{ ucfirst($tender->status) }}</li>
+            <li class="mb-2"><strong>Expires At:</strong> {{ $tender->expires_at?->format('Y-m-d') ?? '-' }}</li>
+            <li class="mb-2"><strong>Featured:</strong> {{ $tender->is_featured ? 'Yes' : 'No' }}</li>
+        </ul>
+
+        {{-- Categories --}}
+        @if($tender->categories->count())
+            <div class="mb-4">
+                <strong>Categories:</strong>
+                <div class="d-flex flex-wrap gap-2 mt-1">
+                    @foreach($tender->categories as $category)
+                        <span class="badge bg-secondary">{{ $category->name }}</span>
+                    @endforeach
+                </div>
             </div>
-        </div>
-    @endif
+        @endif
 
-    {{-- Attachments --}}
-    @if($tender->attachments->count())
+        {{-- Images --}}
+        @if($tender->images->count())
+            <div class="mb-4">
+                <strong>Images:</strong>
+                <div class="row g-2 mt-2">
+                    @foreach($tender->images as $image)
+                        <div class="col-4 col-md-3">
+                            <img src="{{ asset("storage/tenders/images/tender_{$tender->id}/{$image->image}") }}"
+                                 class="img-fluid rounded shadow-sm"
+                                 alt="Tender Image">
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
+        {{-- Attachments --}}
+        @if($tender->attachments->count())
+            <div class="mb-4">
+                <strong>Attachments:</strong>
+                <ul class="list-group list-group-flush mt-2 small">
+                    @foreach($tender->attachments as $attachment)
+                        <li class="list-group-item p-1">
+                            <a href="{{ asset("storage/tenders/attachments/tender_{$tender->id}/{$attachment->file_path}") }}"
+                               target="_blank" class="text-primary">
+                                {{ $attachment->original_name }}
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        {{-- Back Button --}}
         <div class="mt-4">
-            <strong>Attachments:</strong>
-            <ul class="list-disc pl-5 mt-2">
-                @foreach($tender->attachments as $attachment)
-                    <li><a href="{{ asset("storage/tenders/attachments/tender_{$tender->id}/{$attachment->file_path}") }}" class="text-blue-600" target="_blank">{{ $attachment->original_name }}</a></li>
-                @endforeach
-            </ul>
+            <a href="{{ route('customer.tenders.index') }}"
+               class="btn btn-outline-secondary">
+                Back to Tenders
+            </a>
         </div>
-    @endif
 
-    <div class="mt-6">
-        <a href="{{ route('customer.tenders.index') }}" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">Back to Tenders</a>
     </div>
 </div>
 @endsection

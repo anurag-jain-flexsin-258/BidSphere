@@ -1,31 +1,65 @@
-{{-- resources/views/welcome.blade.php --}}
+{{--
+|--------------------------------------------------------------------------
+| Welcome / Landing Page
+|--------------------------------------------------------------------------
+| - Entry point for customers
+| - Auth-aware (guest vs logged-in)
+| - Clear primary actions
+|--------------------------------------------------------------------------
+--}}
 
 @extends('layouts.app')
 
 @section('title', 'Welcome')
 
 @section('content')
-    <div class="text-center mt-5">
-        @auth('customer')
-            {{-- If customer is logged in --}}
-            <h1>Welcome back, {{ Auth::guard('customer')->user()->name }}!</h1>
-            <p class="lead">Go to your dashboard to manage your courses and profile.</p>
+<div class="row justify-content-center">
+    <div class="col-lg-8">
 
-            <div class="mt-4">
-                <a href="{{ route('customer.dashboard') }}" class="btn btn-success">Go to Dashboard</a>
-                <form action="{{ route('customer.logout') }}" method="POST" class="d-inline">
-                    @csrf
-                    <button type="submit" class="btn btn-danger ms-2">Logout</button>
-                </form>
-            </div>
-        @else
-            {{-- If customer is not logged in --}}
-            <h1>Welcome to Bidsphere</h1>
-            <p class="lead">Get started by logging in or registering below.</p>
+        <div class="app-card p-5 text-center">
 
-            <div class="mt-4">
-                <a href="{{ route('customer.login') }}" class="btn btn-primary me-2">Login/Register</a>
-            </div>
-        @endauth
+            @auth('customer')
+                {{-- Logged-in state --}}
+                <h1 class="fw-bold mb-3">
+                    Welcome back, {{ Auth::guard('customer')->user()->name }} 👋
+                </h1>
+
+                <p class="text-muted mb-4">
+                    You’re all set. Manage your profile and tenders from your dashboard.
+                </p>
+
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{{ route('customer.dashboard') }}"
+                       class="btn btn-primary px-4">
+                        Go to Dashboard
+                    </a>
+
+                    <form action="{{ route('customer.logout') }}" method="POST">
+                        @csrf
+                        <button type="submit"
+                                class="btn btn-outline-danger px-4">
+                            Logout
+                        </button>
+                    </form>
+                </div>
+            @else
+                {{-- Guest state --}}
+                <h1 class="fw-bold mb-3">
+                    Welcome to Bidsphere
+                </h1>
+
+                <p class="text-muted mb-4">
+                    Login or register to create and manage your tenders effortlessly.
+                </p>
+
+                <a href="{{ route('customer.login') }}"
+                   class="btn btn-primary btn-lg px-5">
+                    Get Started
+                </a>
+            @endauth
+
+        </div>
+
     </div>
+</div>
 @endsection
