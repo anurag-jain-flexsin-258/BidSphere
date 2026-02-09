@@ -2,39 +2,55 @@
 @section('title', 'Edit Tender')
 
 @section('content')
-<div class="max-w-4xl mx-auto">
+    <div class="max-w-4xl mx-auto">
 
-    {{-- Card Wrapper --}}
-    <div class="app-card p-4 p-md-5 shadow-sm rounded">
+        {{-- Card Wrapper --}}
+        <div class="app-card p-4 p-md-5 shadow-sm rounded">
 
-        {{-- Header --}}
-        <h2 class="fw-bold mb-3">Edit Tender</h2>
-        <p class="text-muted small mb-4">
-            Update the details below for this tender.
-        </p>
+            {{-- Header --}}
+            <div class="d-flex flex-row flex-wrap justify-content-between align-items-center mb-4 gap-3">
 
-        {{-- Validation Errors --}}
-        @if ($errors->any())
-            <div class="alert alert-danger small mb-4">
-                <ul class="mb-0">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
+                {{-- Title + Subtitle --}}
+                <div class="me-3">
+                    <h2 class="fw-bold mb-3">Edit Tender</h2>
+                    <p class="text-muted small mb-4">
+                        Update the details below for this tender.
+                    </p>
+                </div>
+
+                {{-- Back to Tender Button --}}
+                <div class="mt-4">
+                    <a href="{{ route('customer.tenders.index') }}" class="btn btn-outline-secondary">
+                        Back to Tenders
+                    </a>
+                </div>
+
             </div>
-        @endif
 
-        {{-- Form --}}
-        <form action="{{ route('customer.tenders.update', $tender) }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            @method('PUT')
-            @include('customer.tenders._form', [
-                'tender' => $tender,
-                'categories' => $categories,
-                'buttonText' => 'Update Tender'
-            ])
-        </form>
+            {{-- Validation Errors --}}
+            @if ($errors->any())
+                <div class="alert alert-danger small mb-4">
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
+            {{-- Form --}}
+            <form action="{{ route('customer.tenders.update', $tender) }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+                @include('customer.tenders._form', [
+                    'tender' => $tender,
+                    'categories' => $categories,
+                    'buttonText' => 'Update Tender'
+                ])
+            </form>
+
+
+
+        </div>
     </div>
-</div>
 @endsection

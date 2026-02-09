@@ -32,7 +32,7 @@ class AttachmentsRelationManager extends RelationManager
         return $table
             ->columns([
                 TextColumn::make('original_name')
-                    ->label('File Name')
+                    ->label('File Name')    
                     ->searchable(),
 
                 TextColumn::make('mime_type')
@@ -45,7 +45,13 @@ class AttachmentsRelationManager extends RelationManager
                             ? number_format($state / 1024, 2) . ' KB'
                             : '-'
                     ),
-                    Action::make('view')
+                    
+            ])
+            ->headerActions([
+                CreateAction::make(),
+            ])
+            ->actions([
+                Action::make('view')
                         ->label('View')
                         ->icon('heroicon-o-eye')
                         ->url(fn ($record) =>
@@ -54,11 +60,6 @@ class AttachmentsRelationManager extends RelationManager
                             )
                         )
                         ->openUrlInNewTab(),
-            ])
-            ->headerActions([
-                CreateAction::make(),
-            ])
-            ->actions([
                 DeleteAction::make(),
             ]);
     }
