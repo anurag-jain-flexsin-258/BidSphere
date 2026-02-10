@@ -6,29 +6,37 @@ use App\Http\Controllers\Customer\Auth\OTPVerificationController;
 use App\Http\Controllers\Customer\DashboardController;
 use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\Customer\TenderController;
+use App\Http\Controllers\Feed\FeedController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-| Customer-facing routes
+*/
+
+/*
+|--------------------------------------------------------------------------
+| Public Feed (Visible to Everyone)
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [FeedController::class, 'index'])->name('feed.index');
+Route::get('/feed/{tender}', [FeedController::class, 'show'])->name('feed.show');
 
 /*
 |--------------------------------------------------------------------------
 | Customer Routes
 |--------------------------------------------------------------------------
 */
+
 Route::prefix('customer')->name('customer.')->group(function () {
 
-    // -----------------------
-    // Guest Routes
-    // -----------------------
+    /*
+    |--------------------------------------------------------------------------
+    | Guest Routes
+    |--------------------------------------------------------------------------
+    */
+
     Route::middleware('guest:customer')->group(function () {
         Route::get('/login', [EmailLoginController::class, 'showEmailForm'])->name('login');
         Route::post('/login', [EmailLoginController::class, 'sendOTP'])->name('send-otp');
@@ -37,9 +45,12 @@ Route::prefix('customer')->name('customer.')->group(function () {
         Route::post('/verify-otp', [OTPVerificationController::class, 'verifyOTP'])->name('otp.verify');
     });
 
-    // -----------------------
-    // Authenticated Routes
-    // -----------------------
+    /*
+    |--------------------------------------------------------------------------
+    | Authenticated Routes
+    |--------------------------------------------------------------------------
+    */
+
     Route::middleware('auth:customer')->group(function () {
 
         // Dashboard
@@ -52,8 +63,16 @@ Route::prefix('customer')->name('customer.')->group(function () {
         // Logout
         Route::post('/logout', [EmailLoginController::class, 'logout'])->name('logout');
 
-        // Customer Tender Routes (RESTful)
+        // Customer Tender CRUD
         Route::resource('tenders', TenderController::class);
-    });
 
+        /*
+        |--------------------------------------------------------------------------
+        | Feed Interaction (Auth Required)
+        |--------------------------------------------------------------------------
+        */
+
+        Route::post('/feed/{tender}/like', [FeedController::class, 'toggleLike'])
+            ->name('feed.like');
+    });
 });
