@@ -3,7 +3,7 @@
 | Main Application Layout
 |--------------------------------------------------------------------------
 | Base layout for customer-facing frontend.
-| Contains only asset links — no inline CSS or JS.
+| Clean, modern, and ready for Swiper sliders.
 |--------------------------------------------------------------------------
 --}}
 
@@ -29,14 +29,25 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.3/dist/tailwind.min.css" rel="stylesheet">
 
     {{-- ===============================
+        Swiper Slider CSS
+    ================================ --}}
+    <link href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" rel="stylesheet">
+
+    {{-- ===============================
         Custom App CSS
     ================================ --}}
     <link rel="stylesheet" href="{{ asset('assets/css/app.css') }}">
 
+    {{-- Axios CDN --}}
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    {{-- Vite JS --}}
+    @vite('resources/js/app.js')
+
     {{-- Page-specific styles --}}
     @stack('styles')
 </head>
-<body>
+<body class="font-inter bg-gray-50 text-gray-800">
 
     {{-- ===============================
         Header
@@ -64,6 +75,11 @@
 
     {{-- Google Maps --}}
     <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
+
+    {{-- ===============================
+        Swiper JS
+    ================================ --}}
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 
     {{-- ===============================
         Custom App JS

@@ -152,3 +152,8 @@ input[type="radio"] {
         opacity: 0;
     }
 }
+
+/* Pagination dots spacing */
+.swiper-pagination {
+    bottom: 0 !important; 
+}

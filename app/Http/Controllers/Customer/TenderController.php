@@ -9,10 +9,19 @@ use App\Models\Tender;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * Class TenderController
+ *
+ * Handles CRUD operations for customer tenders, including uploading images and attachments.
+ *
+ * @package App\Http\Controllers\Customer
+ */
 class TenderController extends Controller
 {
     /**
      * Display a paginated listing of tenders for the authenticated customer.
+     *
+     * @return \Illuminate\View\View
      */
     public function index()
     {
@@ -26,6 +35,8 @@ class TenderController extends Controller
 
     /**
      * Show the form for creating a new tender.
+     *
+     * @return \Illuminate\View\View
      */
     public function create()
     {
@@ -35,6 +46,9 @@ class TenderController extends Controller
 
     /**
      * Store a newly created tender in storage.
+     *
+     * @param StoreTenderRequest $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(StoreTenderRequest $request)
     {
@@ -57,8 +71,11 @@ class TenderController extends Controller
 
             // 3. Save images
             if ($request->hasFile('images')) {
+                /** @var \Illuminate\Http\UploadedFile $image */
                 foreach ($request->file('images') as $image) {
-                    $path = $image->store("public/tenders/images/tender_{$tender->id}");
+                    // Store on the 'public' disk under tenders/images/tender_{id}
+                    $path = $image->store("tenders/images/tender_{$tender->id}", 'public');
+
                     $tender->images()->create([
                         'image' => basename($path),
                     ]);
@@ -67,8 +84,11 @@ class TenderController extends Controller
 
             // 4. Save attachments
             if ($request->hasFile('attachments')) {
+                /** @var \Illuminate\Http\UploadedFile $attachment */
                 foreach ($request->file('attachments') as $attachment) {
-                    $path = $attachment->store("public/tenders/attachments/tender_{$tender->id}");
+                    // Store on the 'public' disk under tenders/attachments/tender_{id}
+                    $path = $attachment->store("tenders/attachments/tender_{$tender->id}", 'public');
+
                     $tender->attachments()->create([
                         'file_path' => basename($path),
                         'original_name' => $attachment->getClientOriginalName(),
@@ -86,12 +106,17 @@ class TenderController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withErrors(['error' => 'Failed to create tender: ' . $e->getMessage()]);
+            return back()->withErrors([
+                'error' => 'Failed to create tender: ' . $e->getMessage()
+            ]);
         }
     }
 
     /**
      * Display a specific tender.
+     *
+     * @param Tender $tender
+     * @return \Illuminate\View\View
      */
     public function show(Tender $tender)
     {
@@ -102,6 +127,9 @@ class TenderController extends Controller
 
     /**
      * Show the form for editing an existing tender.
+     *
+     * @param Tender $tender
+     * @return \Illuminate\View\View
      */
     public function edit(Tender $tender)
     {
@@ -111,7 +139,11 @@ class TenderController extends Controller
     }
 
     /**
-     * Update a tender, including images and attachments.
+     * Update a tender, including new images and attachments.
+     *
+     * @param UpdateTenderRequest $request
+     * @param Tender $tender
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateTenderRequest $request, Tender $tender)
     {
@@ -134,11 +166,10 @@ class TenderController extends Controller
 
             // Handle new images
             if ($request->hasFile('images')) {
+                /** @var \Illuminate\Http\UploadedFile $image */
                 foreach ($request->file('images') as $image) {
-                    $path = $image->store(
-                        "tenders/images/tender_{$tender->id}",
-                        'public'
-                    );
+                    $path = $image->store("tenders/images/tender_{$tender->id}", 'public');
+
                     $tender->images()->create([
                         'image' => basename($path),
                     ]);
@@ -147,8 +178,10 @@ class TenderController extends Controller
 
             // Handle new attachments
             if ($request->hasFile('attachments')) {
+                /** @var \Illuminate\Http\UploadedFile $attachment */
                 foreach ($request->file('attachments') as $attachment) {
                     $path = $attachment->store("tenders/attachments/tender_{$tender->id}", 'public');
+
                     $tender->attachments()->create([
                         'file_path' => basename($path),
                         'original_name' => $attachment->getClientOriginalName(),
@@ -163,18 +196,25 @@ class TenderController extends Controller
 
             return redirect()->route('customer.tenders.index')
                 ->with('success', 'Tender updated successfully.');
+
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withErrors(['error' => 'Failed to update tender: ' . $e->getMessage()]);
+            return back()->withErrors([
+                'error' => 'Failed to update tender: ' . $e->getMessage()
+            ]);
         }
     }
 
     /**
      * Soft delete a tender.
+     *
+     * @param Tender $tender
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Tender $tender)
     {
         $this->authorize('delete', $tender);
+
         $tender->delete();
 
         return redirect()->route('customer.tenders.index')

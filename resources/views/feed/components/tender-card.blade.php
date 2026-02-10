@@ -6,10 +6,9 @@
 
     {{-- Background Image --}}
     @if($image)
-        <div class="position-relative" style="height: 300px; overflow:hidden;">
-            <img src="{{ asset('storage/tenders/images/tender_'.$tender->id.'/'.$image->image) }}"
-                 class="w-100 h-100 object-fit-cover"
-                 alt="{{ $tender->title }}">
+        <div class="position-relative" style="height: 300px; overflow: hidden;">
+            <img src="{{ asset('storage/tenders/images/tender_' . $tender->id . '/' . $image->image) }}"
+                class="w-100 h-100" style="object-fit: contain;" alt="{{ $tender->title }}">
         </div>
     @endif
 
@@ -33,11 +32,15 @@
             <p class="mb-3">{{ Str::limit($tender->description, 200) }}</p>
         @endunless
 
+        {{-- Quantity --}}
+        <div class="text-muted small mb-2">
+            <span>Qty: {{ $tender->quantity }}</span>
+        </div>
+
         {{-- Stats --}}
-        <div class="d-flex justify-content-between text-muted small mb-3">
+        <div class="d-flex text-muted small mb-3">
             <span>👁 {{ $tender->views_count }} views</span>
             <span>👍 {{ $tender->likes_count }} likes</span>
-            <span>Qty: {{ $tender->quantity }}</span>
         </div>
 
         {{-- Actions --}}
