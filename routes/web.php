@@ -4,14 +4,31 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Customer\Auth\EmailLoginController;
 use App\Http\Controllers\Customer\Auth\OTPVerificationController;
 use App\Http\Controllers\Customer\DashboardController;
+use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\Customer\TenderController;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+| Customer-facing routes
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/', function () {
     return view('welcome');
 });
 
+/*
+|--------------------------------------------------------------------------
+| Customer Routes
+|--------------------------------------------------------------------------
+*/
 Route::prefix('customer')->name('customer.')->group(function () {
-    // Guest routes
+
+    // -----------------------
+    // Guest Routes
+    // -----------------------
     Route::middleware('guest:customer')->group(function () {
         Route::get('/login', [EmailLoginController::class, 'showEmailForm'])->name('login');
         Route::post('/login', [EmailLoginController::class, 'sendOTP'])->name('send-otp');
@@ -20,14 +37,22 @@ Route::prefix('customer')->name('customer.')->group(function () {
         Route::post('/verify-otp', [OTPVerificationController::class, 'verifyOTP'])->name('otp.verify');
     });
 
-    // Authenticated routes
+    // -----------------------
+    // Authenticated Routes
+    // -----------------------
     Route::middleware('auth:customer')->group(function () {
+
+        // Dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-        Route::get('/profile', [DashboardController::class, 'editProfile'])->name('profile.edit');
-        Route::post('/profile', [DashboardController::class, 'updateProfile'])->name('profile.update');
+
+        // Profile
+        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+        // Logout
         Route::post('/logout', [EmailLoginController::class, 'logout'])->name('logout');
-        
-        // Customer Tender routes
+
+        // Customer Tender Routes (RESTful)
         Route::resource('tenders', TenderController::class);
     });
 
